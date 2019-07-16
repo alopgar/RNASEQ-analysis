@@ -1,5 +1,5 @@
-This script uses .fastq.gz RNA files for its processing using publicly available bioinformatic tools. It launches multiple processes (1 per sample) to the megacomputer queue.
-Modifications on default parameters (trimming conditions, mapping tool, reference database, ...) must be done INSIDE this code.
+This script uses .fastq.gz RNA files for its processing using publicly available bioinformatic tools. It launches multiple processes (1 per sample) to the megacomputer queue. Modifications on default parameters (trimming conditions, mapping tool, reference database, ...) must be done INSIDE this code.
+
 IMPORTANT!! An IDs file is required for the correct functioning of this pipeline.
 
 PIPELINE:
