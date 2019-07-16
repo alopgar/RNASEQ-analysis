@@ -53,6 +53,7 @@ export HISAT2_TRANS=$LUSTRE/genoma-referencia_ss11/INDEX/SS11-INDEX
 ####################################################################
 export trimming=false
 export mapping='HISAT2'
+export samtools=true
 
 export lines=`wc -l $inputFile | awk -F ' ' '{print $1}'`
 export prenames=(`awk '{print $1}' $inputFile`)
@@ -95,7 +96,7 @@ export COUNT=$PTH/6_HTSEQC
 # PIPELINE
 ####################################################################
 for i in `seq $lines`; do
-	sh ~/bin/htseq.sh $trimming $mapping ${prenames[$i-1]} ${names[$i-1]} ${parmix[$i-1]}
+	sh ~/bin/htseq.sh $trimming $mapping $samtools ${prenames[$i-1]} ${names[$i-1]} ${parmix[$i-1]}
 done
 
 # AFTER GETTING ALL Htseq-Count FILES:
