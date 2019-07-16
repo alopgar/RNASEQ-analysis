@@ -58,7 +58,8 @@ export samtools=true
 export lines=`wc -l $inputFile | awk -F ' ' '{print $1}'`
 export prenames=(`awk '{print $1}' $inputFile`)
 export names=(`awk '{print $3}' $inputFile`)
-export parmix=(`awk '{print $4 "_" $5}' $inputFile`)
+export parmix=(`awk '{print $4}' $inputFile`)
+#export parmix=(`awk '{print $4 "_" $5}' $inputFile`)
 
 echo 'Number of animals to analyse = '$lines
 
