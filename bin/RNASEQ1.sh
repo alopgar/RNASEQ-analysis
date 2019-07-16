@@ -88,8 +88,16 @@ else
   exit 1
 fi
 
-if [ ! -d $PTH/5_BAM/ ]; then mkdir -p $PTH/5_BAM/; fi
-export BAM=$PTH/5_BAM
+if [ "$samtools" = true ]; then
+	if [ ! -d $PTH/5_BAM/ ]; then mkdir -p $PTH/5_BAM/; fi
+	export BAM=$PTH/5_BAM
+elif [ "$samtools" = false ]; then
+	:
+else
+	echo "ERROR: trimming value not valid. Please choose booleans: true or false"
+	exit 1
+fi
+	
 if [ ! -d $PTH/6_HTSEQC/ ]; then mkdir -p $PTH/6_HTSEQC/; fi
 export COUNT=$PTH/6_HTSEQC
 
