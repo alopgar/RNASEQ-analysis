@@ -8,9 +8,9 @@
 
 module load gcc/6.4.0 samtools/1.9 htseq/0.10.0-python-2.7.15
 
-prename=$3
-name=$4
-params=$5
+prename=$4
+name=$5
+params=$6
 
 # TRIM GALORE (need process time)
 ####################################################################
@@ -71,14 +71,14 @@ fi
 
 # SAMTOOLS: (30')
 ####################################################################
-if [ "$2" = 'TOPHAT' ]; then
-  # .bam to sorted.bam: (30 min)
-	samtools sort -n -o $BAM/$name.n.sorted.bam $PTH/4_tophat/tophat_$name/accepted_hits.bam
-elif [ "$2" = 'HISAT2' ]; then
-  # .sam to sorted.bam: (30 min)
-	samtools sort -n -o $BAM/$name.n.sorted.bam $PTH/4_hisat2/$name.sam
-elif [ "$2" = 'NONE' ]; then
-  echo 'samtools sort NOT REQUESTED for sample '$name' with parameters: '$params
+if [ "$3" = true ]; then
+	if [ "$2" = 'TOPHAT' ]; then
+ 		# .bam to sorted.bam: (30 min)
+		samtools sort -n -o $BAM/$name.n.sorted.bam $PTH/4_tophat/tophat_$name/accepted_hits.bam
+	elif [ "$2" = 'HISAT2' ]; then
+ 		# .sam to sorted.bam: (30 min)
+		samtools sort -n -o $BAM/$name.n.sorted.bam $PTH/4_hisat2/$name.sam
+	fi
 fi
 
 # Htseq-Count: (1h 30' + 2h 30')
