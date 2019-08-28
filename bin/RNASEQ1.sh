@@ -105,7 +105,7 @@ export COUNT=$PTH/6_HTSEQC
 # PIPELINE
 ####################################################################
 for i in `seq $lines`; do
-	sbatch ~/bin/RNAseq/htseq.sh $trimming $mapping $samtools ${prenames[$i-1]} ${names[$i-1]} ${parmix[$i-1]}
+	sbatch ~/bin/htseq.sh $trimming $mapping $samtools ${prenames[$i-1]} ${names[$i-1]} ${parmix[$i-1]}
 done
 
 # AFTER GETTING ALL Htseq-Count FILES:
