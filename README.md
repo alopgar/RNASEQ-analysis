@@ -6,14 +6,15 @@ PIPELINE:
 
 0) **IDs file creation**: IDs file must contain some basic information:
 
-|ID      |Group1 |Group2 |
-|--------|-------|-------|
-|Sample1 |Male   |Diet1  |
-|Sample2 |Female |Diet1  |
-|Sample3 |Male   |Diet2  |
-|Sample4 |Female |Diet2  |
-|...     |...    |...    |
+|ID      |Out_Names |Group1 |Group2 |
+|--------|----------|-------|-------|
+|ID-001  |Sample1   |Male   |Diet1  |
+|ID-002  |Sample2   |Female |Diet1  |
+|ID-003  |Sample3   |Male   |Diet2  |
+|ID-004  |Sample4   |Female |Diet2  |
+|...     |...       |...    |...    |
 
+- **IDs and output names**: ID is the name of the .fastq file before processing. Output names are base names given to the files once trimmed for an easier handling of file names. If names are not desired to be changed, use the same code for both columns.
 - **Sample groups**: Depending on the number of grouping variables we manage, some changes must be done in the code:
   - If only one group factor is used: `export parmix=('awk '{print $n}' $inputFile')`
   - If 2 or more group factors are used: `export parmix=('awk '{print $n "_" $n+1 "_" $n+2}' $inputFile')`
