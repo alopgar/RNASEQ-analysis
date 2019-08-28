@@ -18,8 +18,10 @@ PIPELINE:
 - **Sample groups**: Depending on the number of grouping variables we manage, some changes must be done in the code:
   - If only one group factor is used: `export parmix=('awk '{print $n}' $inputFile')`
   - If 2 or more group factors are used: `export parmix=('awk '{print $n "_" $n+1 "_" $n+2}' $inputFile')`
+  
   Being n the column position inside the IDs file.
-- Important: Do **NOT** include **headers** in your IDs file.
+
+Important: Do **NOT** include **headers** in your IDs file.
 
 1) **TRIMMING**: Trim Galore! software. This step can be included (trimming=true) or omitted (trimming=false). 3 processes:
 - Illumina adapters trimming
