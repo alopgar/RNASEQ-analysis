@@ -14,7 +14,7 @@ PIPELINE:
 |ID-004  |Sample4   |Female |Diet2  |
 |...     |...       |...    |...    |
 
-- **IDs and output names**: ID is the name of the .fastq file before processing. Output names are base names given to the files once trimmed for an easier handling of file names. If names are not desired to be changed, use the same code for both columns.
+- **IDs and output names**: IDs are the names of the .fastq files before processing. Output names are base names given to the files once trimmed for an easier handling. If names are not desired to be changed, use the same code for both columns.
 - **Sample groups**: Depending on the number of grouping variables we manage, some changes must be done in the code:
   - If only one group factor is used: `export parmix=('awk '{print $n}' $inputFile')`
   - If 2 or more group factors are used: `export parmix=('awk '{print $n "_" $n+1 "_" $n+2}' $inputFile')`
