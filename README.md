@@ -14,14 +14,14 @@ PIPELINE:
 |ID-004  |Sample4   |Female |Diet2  |
 |...     |...       |...    |...    |
 
+Important: Do **NOT** include **headers** in your IDs file.
+
 - **IDs and output names**: IDs are the names of the .fastq files before processing. Output names are base names given to the files once trimmed for an easier handling. If names are not desired to be changed, use the same code for both columns.
 - **Sample groups**: Depending on the number of grouping variables we manage, some changes must be done in the code:
   - If only one group factor is used: `export parmix=('awk '{print $n}' $inputFile')`
   - If 2 or more group factors are used: `export parmix=('awk '{print $n "_" $n+1 "_" $n+2}' $inputFile')`
   
   Being n the column position inside the IDs file.
-
-Important: Do **NOT** include **headers** in your IDs file.
 
 1) **TRIMMING**: Trim Galore! software. This step can be included (trimming=true) or omitted (trimming=false). 3 processes:
 - Illumina adapters trimming
