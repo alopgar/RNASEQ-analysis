@@ -95,7 +95,7 @@ if [ "$samtools" = true ]; then
 elif [ "$samtools" = false ]; then
 	:
 else
-	echo "ERROR: trimming value not valid. Please choose booleans: true or false"
+	echo "ERROR: samtools value not valid. Please choose booleans: true or false"
 	exit 1
 fi
 	
@@ -105,7 +105,7 @@ export COUNT=$PTH/6_HTSEQC
 # PIPELINE
 ####################################################################
 for i in `seq $lines`; do
-	sh ~/bin/htseq.sh $trimming $mapping $samtools ${prenames[$i-1]} ${names[$i-1]} ${parmix[$i-1]}
+	sbatch ~/bin/RNAseq/htseq.sh $trimming $mapping $samtools ${prenames[$i-1]} ${names[$i-1]} ${parmix[$i-1]}
 done
 
 # AFTER GETTING ALL Htseq-Count FILES:
