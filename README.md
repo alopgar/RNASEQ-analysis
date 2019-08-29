@@ -4,7 +4,7 @@ IMPORTANT!! An IDs file is required for the correct functioning of this pipeline
 
 PIPELINE:
 
-0) **IDs file creation**: IDs file must contain some basic information:
+0) **IDs file creation**: IDs file must be a **tabulation-separated .txt formatted file**, containing some basic information:
 
 |ID      |Out_Names |Group1 |Group2 |
 |--------|----------|-------|-------|
@@ -29,9 +29,14 @@ Important: Do **NOT** include **headers** in your IDs file.
 - T-tail trimming
 
 2) **MAPPING**: Versus Sus scrofa 11.1 reference genome. 3 options available:
-- mapping='HISAT2': .sam file generation. Converted to .bam with 'samtools sort'.
-- mapping='TOPHAT': .bam file generation. Also processed with 'samtools sort'.
+- mapping='HISAT2': .sam file generation.
+- mapping='TOPHAT': .bam file generation.
 - mapping='NONE': Mapping omitted.
+
+3) **.BAM SORTING**: Convert .sam or .bam to .sorted.bam with 'samtools sort'. 3 options available:
+- samtools='bam2bam': Convert .bam to .sorted.bam - used for TOPHAT output.
+- samtools='sam2bam': Convert .sam to .sorted.bam - used for HISAT2 output.
+- samtools='NONE': .bam sorting omitted.
 
 3) **READ COUNT**: With HTSEQ-COUNT tool. Outputs gene and transcript counts files.
 
