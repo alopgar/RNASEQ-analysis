@@ -38,5 +38,5 @@ Important: Do **NOT** include **headers** in your IDs file.
 - samtools='sam2bam': Convert .sam to .sorted.bam - used for HISAT2 output.
 - samtools='NONE': .bam sorting omitted.
 
-3) **READ COUNT**: With HTSEQ-COUNT tool. Outputs gene and transcript counts files.
+4) **READ COUNT**: With HTSEQ-COUNT tool. Outputs gene and transcript counts files.
 
