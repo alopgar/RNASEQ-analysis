@@ -7,22 +7,26 @@ usage(){
 cat << _EUs_
 $(basename "$0") -- Initiates a pipeline for RNAseq analysis.\n
 \nDESCRIPTION:\n
-  \tThis script uses .fastq.gz RNA files for its processing using publicly available bioinformatic tools. It launches multiple processes\n
-  \t(1 per sample) to the megacomputer queue.\n
-  \tModifications on default parameters (trimming conditions, mapping tool, reference database, ...) must be done INSIDE this code.\n
-  \tIMPORTANT!! An IDs file is required for the correct functioning of this pipeline.\n
+	\tThis script uses .fastq.gz RNA files for its processing using publicly available bioinformatic tools. It launches multiple processes\n
+	\t(1 per sample) to the megacomputer queue.\n
+	\tModifications on default parameters (trimming conditions, mapping tool, reference database, ...) must be done INSIDE this code.\n
+	\tIMPORTANT!! An IDs file is required for the correct functioning of this pipeline.\n
 \nPIPELINE:\n
-  \tA) TRIMMING: Trim Galore! software. This step can be included (trimming=true) or omitted (trimming=false). 3 processes:\n
-    \t\t- Illumina adapters trimming\n
-    \t\t- A-tail trimming\n
-    \t\t- T-tail trimming\n
-  \n\tB) MAPPING: Versus Sus scrofa 11.1 reference genome. 3 options available:\n
-    \t\t- mapping='TOPHAT': .bam file generation. Also processed with 'samtools sort'.\n
-    \t\t- mapping='HISAT2': .sam file generation. Converted to .bam with 'samtools sort'.\n
-    \t\t- mapping='NONE': Mapping omitted.\n
-  \n\tC) READ COUNT: With HTSEQ-COUNT tool. Outputs gene and transcript counts files.\n 
+	\tA) TRIMMING: Trim Galore! software. This step can be included (trimming=true) or omitted (trimming=false). 3 processes:\n
+		\t\t- Illumina adapters trimming\n
+		\t\t- A-tail trimming\n
+		\t\t- T-tail trimming\n
+	\n\tB) MAPPING: Versus Sus scrofa 11.1 reference genome. 3 options available:\n
+		\t\t- mapping='TOPHAT': .bam file generation.\n
+		\t\t- mapping='HISAT2': .sam file generation.\n
+		\t\t- mapping='NONE': Mapping omitted.\n
+	\n\tC) .BAM FILE: Convert .sam or .bam to .sorted.bam with 'samtools sort'. 3 options available:\n
+		\t\t- samtools='bam2bam': Convert .bam to .sorted.bam - used for TOPHAT output.\n
+		\t\t- samtools='sam2bam': Convert .sam to .sorted.bam - used for HISAT2 output.\n
+		\t\t- samtools='NONE': .bam sorting omitted.\n
+	\n\tD) READ COUNT: With HTSEQ-COUNT tool. Outputs gene and transcript counts files.\n 
 \nPARAMETERS:\n
-   \t-h, --help: Prints this screen.\n
+	\t-h, --help: Prints this screen.\n
 _EUs_
 }
 
@@ -46,14 +50,15 @@ export INPUT=$LUSTRE/Results/RNAseq/ovilo9/RawData
 export PTH=$LUSTRE/Results/RNAseq/ovilotest
 export inputFile=$PTH/IDs_all.txt
 export GTF=$LUSTRE/genoma-referencia_ss11/Sus_scrofa.Sscrofa11.1.90.gtf
-export HISAT2_TRANS=$LUSTRE/genoma-referencia_ss11/INDEX/SS11-INDEX
+export HISAT2_TRANS=$LUSTRE/genoma-referencia_ss11/INDEX_ht2/SS11-INDEX
 #export GTF=/home/ovilo/winpro/I3-NGS-INIA/Tools/hisat2-2.1.0/genome_trans_index/ensembl_Sscrofa11.1.91/Sus_scrofa.Sscrofa11.1.91.gtf
 
 # PARAMETERS
 ####################################################################
 export trimming=false
 export mapping='HISAT2'
-export samtools=true
+export samtools='sam2bam'
+export htseq=true
 
 export lines=`wc -l $inputFile | awk -F ' ' '{print $1}'`
 export prenames=(`awk '{print $1}' $inputFile`)
@@ -79,33 +84,33 @@ else
 fi
 	
 if [ "$mapping" = 'TOPHAT' ]; then
-  if [ ! -d $PTH/4_tophat/ ]; then mkdir $PTH/4_tophat/; fi
+	if [ ! -d $PTH/4_tophat/ ]; then mkdir $PTH/4_tophat/; fi
 elif [ "$mapping" = 'HISAT2' ]; then
-  if [ ! -d $PTH/4_hisat2/ ]; then mkdir $PTH/4_hisat2/; fi
+	if [ ! -d $PTH/4_hisat2/ ]; then mkdir $PTH/4_hisat2/; fi
 elif [ "$mapping" = 'NONE' ]; then
-  :
-else
-  echo "ERROR: mapping value not valid. Please choose 'TOPHAT', 'HISAT2' or 'NONE'"
-  exit 1
-fi
-
-if [ "$samtools" = true ]; then
-	if [ ! -d $PTH/5_BAM/ ]; then mkdir -p $PTH/5_BAM/; fi
-	export BAM=$PTH/5_BAM
-elif [ "$samtools" = false ]; then
 	:
 else
-	echo "ERROR: samtools value not valid. Please choose booleans: true or false"
+	echo "ERROR: mapping value not valid. Please choose 'TOPHAT', 'HISAT2' or 'NONE'"
 	exit 1
 fi
-	
+
+if [ "$samtools" == "bam2bam" ] || [ "$samtools" == "sam2bam" ]; then
+	if [ ! -d $PTH/5_BAM/ ]; then mkdir -p $PTH/5_BAM/; fi
+	export BAM=$PTH/5_BAM
+elif [ "$samtools" == 'NONE' ]; then
+	:
+else
+	echo "ERROR: samtools value not valid. Please choose 'bam2bam', 'sam2bam' or 'NONE'"
+	exit 1
+fi
+
 if [ ! -d $PTH/6_HTSEQC/ ]; then mkdir -p $PTH/6_HTSEQC/; fi
 export COUNT=$PTH/6_HTSEQC
 
 # PIPELINE
 ####################################################################
 for i in `seq $lines`; do
-	sbatch ~/bin/htseq.sh $trimming $mapping $samtools ${prenames[$i-1]} ${names[$i-1]} ${parmix[$i-1]}
+	sbatch ~/bin/RNAseq/htseq.sh $trimming $mapping $samtools $htseq ${prenames[$i-1]} ${names[$i-1]} ${parmix[$i-1]}
 done
 
 # AFTER GETTING ALL Htseq-Count FILES:
