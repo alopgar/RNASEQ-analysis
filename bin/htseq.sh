@@ -6,11 +6,11 @@
 #SBATCH -c 24     #Numero de procesadores por tarea
 #SBATCH -J HTSEQ     #nombre del proceso
 
-module load gcc/6.4.0 samtools/1.9 htseq/0.10.0-python-2.7.15
+module load gcc/6.4.0
 
-prename=$4
-name=$5
-params=$6
+prename=$5
+name=$6
+params=$7
 
 # TRIM GALORE (need process time)
 ####################################################################
@@ -71,20 +71,26 @@ fi
 
 # SAMTOOLS: (30')
 ####################################################################
-if [ "$3" = true ]; then
-	if [ "$2" = 'TOPHAT' ]; then
- 		# .bam to sorted.bam: (30 min)
-		samtools sort -n -o $BAM/$name.n.sorted.bam $PTH/4_tophat/tophat_$name/accepted_hits.bam
-	elif [ "$2" = 'HISAT2' ]; then
- 		# .sam to sorted.bam: (30 min)
-		samtools sort -n -o $BAM/$name.n.sorted.bam $PTH/4_hisat2/$name.sam
-	fi
+if [ "$3" = 'bam2bam' ]; then
+	# .bam to sorted.bam: (30 min)
+	module load samtools/1.9
+	samtools sort -n -o $BAM/$name.n.sorted.bam $PTH/4_tophat/tophat_$name/accepted_hits.bam
+elif [ "$3" = 'sam2bam' ]; then
+	# .sam to sorted.bam: (30 min)
+	module load samtools/1.9
+	samtools sort -n -o $BAM/$name.n.sorted.bam $PTH/4_hisat2/$name.sam
 fi
 
 # Htseq-Count: (1h 30' + 2h 30')
 ####################################################################
-htseq-count -f bam -r name --stranded=reverse -t exon -i gene_id -m union $BAM/$name.n.sorted.bam $GTF > $COUNT/$name.GnCount.txt
-htseq-count -f bam -r name --stranded=reverse -t exon -i transcript_id -m union $BAM/$name.n.sorted.bam $GTF > $COUNT/$name.TrCount.txt
+if [ "$4" = true ]; then
+	echo 'HTSEQ-COUNT activated for sample '$name' with parameters: '$params
+	module load htseq/0.10.0-python-2.7.15
+	htseq-count -f bam -r name --stranded=reverse -t exon -i gene_id -m union $BAM/$name.n.sorted.bam $GTF > $COUNT/$name.GnCount.txt
+	htseq-count -f bam -r name --stranded=reverse -t exon -i transcript_id -m union $BAM/$name.n.sorted.bam $GTF > $COUNT/$name.TrCount.txt
+elif [ "$4" = false ]; then
+	echo 'HTSEQ-COUNT NOT REQUESTED for sample '$name' with parameters: '$params
+fi
 
 #--stranded=reverse !!! DO NOT use "--stranded=yes" for illumina truseq stranded libraries  -> did not count correctly 
 # --nonunique=<nonunique mode>
